@@ -2,6 +2,7 @@
   "name": "minhaApi",
   "version": "1.0.0",
   "scripts": {
-    "vercel-build": "echo 'Building API...' && python main.py"
+    "vercel-build": "echo 'Building API...'",
+    "start": "./start.sh"
   }
 }
