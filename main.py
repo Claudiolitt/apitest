@@ -15,8 +15,16 @@ def scrape_page(option: str):
     url = f"{base_url}?opcao={option}"
     headers = {'User-Agent': 'Mozilla/5.0'}
     response = requests.get(url, headers=headers, verify=False)
+    
+    # Verifique o conteúdo da resposta
+    if response.status_code != 200:
+        return {"error": "Failed to fetch the page"}
+
     soup = BeautifulSoup(response.content, 'html.parser')
     
+    # Depurando para verificar se o HTML foi carregado corretamente
+    print(soup.prettify())
+
     # Encontrando tabelas e extraindo dados
     tables = soup.find_all('table')
     table_data = []
@@ -27,10 +35,12 @@ def scrape_page(option: str):
             cols = [ele.text.strip() for ele in cols]
             table_data.append(cols)
     
+    # Verifique se as tabelas foram encontradas
+    if not tables:
+        return {"error": "No tables found"}
+
     return {"table_data": table_data}
 
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run(app, host="0.0.0.0", port=8000)
-
-
