@@ -1,4 +1,6 @@
 from fastapi import FastAPI
+import requests
+from bs4 import BeautifulSoup
 
 app = FastAPI()
 
@@ -15,10 +17,20 @@ def scrape_page(option: str):
     response = requests.get(url, headers=headers, verify=False)
     soup = BeautifulSoup(response.content, 'html.parser')
     
-    paragraphs = [p.text for p in soup.find_all('p')]
-    return {"paragraphs": paragraphs}
+    # Encontrando tabelas e extraindo dados
+    tables = soup.find_all('table')
+    table_data = []
+    for table in tables:
+        rows = table.find_all('tr')
+        for row in rows:
+            cols = row.find_all('td')
+            cols = [ele.text.strip() for ele in cols]
+            table_data.append(cols)
+    
+    return {"table_data": table_data}
 
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run(app, host="0.0.0.0", port=8000)
+
 
